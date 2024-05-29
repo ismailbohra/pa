@@ -99,6 +99,21 @@ app.post('/login-challenge', async (req, res) => {
     return res.json({ options: opts });
 });
 
+app.post('/logout', async (req, res) => {
+    const { username } = req.body;
+    try {
+        if (!userStore[username]) {
+            return res.status(404).json({ error: 'User not found!' });
+        }
+        delete userStore[username];
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error during logout:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 app.post('/login-verify', async (req, res) => {
     const { username, cred }  = req.body;
 

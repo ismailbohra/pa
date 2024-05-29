@@ -154,8 +154,8 @@
   
         const verification = await result.json();
   
-        if (result.ok && verification.status) {
-          window.location.href = "./profile.html"; // Redirect upon successful login
+        if (result.ok && verification.success) {
+          window.location.href = `./profile.html?username=${username}`; // Redirect upon successful login
         } else {
           throw new Error(verification.error || "Login verification failed");
         }

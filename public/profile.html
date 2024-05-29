@@ -4,9 +4,125 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin-inline: 10px;
+        padding: 0;
+        background-color: #f0f2f5;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .logout-btn {
+        margin: auto;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .logout-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      ol {
+        margin-left: 20px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Welcome Page</h1>
-    
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <div class="content">
+          <p>
+            <strong
+              >Introducing SecureAuth: Your Path to Passwordless
+              Authentication</strong
+            >
+          </p>
+          <p>
+            Welcome to SecureAuth, your gateway to a seamless and secure
+            authentication experience. In today's digital landscape, the
+            traditional username-password authentication method poses
+            significant security risks. With SecureAuth, we're introducing a
+            revolutionary approach to authentication: passwordless
+            authentication powered by SimpleWebAuthn.
+          </p>
+          <p><strong>What is SecureAuth?</strong></p>
+          <p>
+            SecureAuth is a cutting-edge authentication platform designed to
+            provide users with a secure and convenient way to access their
+            accounts without the hassle of passwords. By leveraging the power of
+            SimpleWebAuthn, SecureAuth offers a robust authentication solution
+            that is both highly secure and user-friendly.
+          </p>
+          <p><strong>How SecureAuth Works:</strong></p>
+          <ol>
+            <li>
+              <strong>Registration:</strong> Users begin by registering their
+              accounts with SecureAuth. During registration, users will be
+              prompted to select their preferred authentication method, such as
+              fingerprint, facial recognition, or security keys.
+            </li>
+            <li>
+              <strong>Authentication:</strong> When logging in, users are
+              authenticated using their chosen method. SecureAuth verifies the
+              user's identity securely and seamlessly, without the need for
+              passwords.
+            </li>
+            <li>
+              <strong>Secure Access:</strong> With SecureAuth, users enjoy
+              passwordless access to their accounts, enhancing both security and
+              convenience.
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function logout() {
+        const url = new URL(window.location);
+        const username = url.searchParams.get("username");
+        const response = await fetch("/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username }),
+        });
+      }
+    </script>
   </body>
 </html>
