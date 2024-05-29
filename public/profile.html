@@ -122,6 +122,9 @@
           },
           body: JSON.stringify({ username }),
         });
+        if (response.ok && response.success) {
+            window.location.href = "/login.html";
+        }
       }
     </script>
   </body>
