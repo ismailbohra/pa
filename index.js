@@ -43,7 +43,7 @@ app.post('/register-challenge', async (req, res) => {
     const user = userStore[userId];
 
     const challengePayload = await generateRegistrationOptions({
-        rpID: 'localhost',
+        rpID: 'passwordless-authentication.onrender.com',
         rpName: 'My Localhost Machine',
         attestationType: 'none',
         userName: user.username,
@@ -67,8 +67,8 @@ app.post('/register-verify', async (req, res) => {
 
     const verificationResult = await verifyRegistrationResponse({
         expectedChallenge: challenge,
-        expectedOrigin: 'http://localhost:3000',
-        expectedRPID: 'localhost',
+        expectedOrigin: 'https://passwordless-authentication.onrender.com',
+        expectedRPID: 'passwordless-authentication.onrender.com',
         response: cred,
     });
 
@@ -90,7 +90,7 @@ app.post('/login-challenge', async (req, res) => {
     }
 
     const opts = await generateAuthenticationOptions({
-        rpID: 'localhost',
+        rpID: 'passwordless-authentication.onrender.com',
         userVerification: 'preferred',
     });
 
@@ -111,8 +111,8 @@ app.post('/login-verify', async (req, res) => {
 
     const result = await verifyAuthenticationResponse({
         expectedChallenge: challenge,
-        expectedOrigin: 'http://localhost:3000',
-        expectedRPID: 'localhost',
+        expectedOrigin: 'https://passwordless-authentication.onrender.com',
+        expectedRPID: 'passwordless-authentication.onrender.com',
         response: cred,
         authenticator: user.credentials[0] // Assuming one credential for simplicity
     });
