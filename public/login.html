@@ -1,48 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <form id="login-form">
-        <input type="text" placeholder="userId" id="userId" />
-        <button type="submit">Login with Passkey</button>
-    </form>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signin</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
-    <script>
-         const form = document.getElementById('login-form');
-         const userIdField = document.getElementById('userId')
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        padding: 10px;
+      }
 
-         form.addEventListener('submit', async e => {
-            e.preventDefault()
-            const userId = userIdField.value;
-            
-            const response = await fetch('/login-challenge', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId })
-            })
+      .login-container {
+        background: #ffffff;
+        padding: 20px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+      }
 
-            const challengeResult = await response.json()
-            const { options } = challengeResult // Server side challenge
+      .login-container h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        text-align: center;
+        color: #333;
+      }
 
-            const authenticationResult = await SimpleWebAuthnBrowser.startAuthentication(options)
-            console.log(authenticationResult)
+      .form-group {
+        margin-bottom: 15px;
+      }
 
-            await fetch('/login-verify', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId, cred: authenticationResult })
-            })
-         })
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+      }
 
-    </script>
-</body>
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px;
+        background: #007bff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: #0056b3;
+      }
+
+      .form-footer {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .form-footer a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      .form-footer a:hover {
+        text-decoration: underline;
+      }
+
+      .error-message {
+        color: red;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Signin</h1>
+      <div class="error-message" id="error-message"></div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="username" name="username" required />
+        </div>
+        <button type="submit" class="btn">Signin</button>
+      </form>
+      <div class="form-footer">
+        <p>Don't have an account? <a href="/signup.html">Signup</a></p>
+      </div>
+    </div>
+  </body>
 </html>
+
+<script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+<script>
+    const form = document.getElementById("login-form");
+    const userIdField = document.getElementById("username");
+    const errorMessage = document.getElementById("error-message");
+  
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = userIdField.value;
+  
+      try {
+        const response = await fetch("/login-challenge", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username }),
+        });
+  
+        const challengeResult = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(challengeResult.error || "Login challenge failed");
+        }
+  
+        const { options } = challengeResult;
+  
+        const authenticationResult = await SimpleWebAuthnBrowser.startAuthentication(options);
+        console.log(authenticationResult);
+  
+        const result = await fetch("/login-verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, cred: authenticationResult }),
+        });
+  
+        const verification = await result.json();
+  
+        if (result.ok && verification.status) {
+          window.location.href = "./profile.html"; // Redirect upon successful login
+        } else {
+          throw new Error(verification.error || "Login verification failed");
+        }
+      } catch (error) {
+        errorMessage.textContent = error.message || "An error occurred. Please try again.";
+        console.error("Error:", error);
+      }
+    });
+  </script>
+  
