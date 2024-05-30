@@ -5,7 +5,7 @@ const {
     generateAuthenticationOptions, 
     verifyAuthenticationResponse 
 } = require('@simplewebauthn/server');
-
+require('dotenv').config()
 const crypto = require("node:crypto");
 if (!globalThis.crypto) {
     globalThis.crypto = crypto;
@@ -43,7 +43,7 @@ app.post('/register-challenge', async (req, res) => {
     const user = userStore[userId];
 
     const challengePayload = await generateRegistrationOptions({
-        rpID: 'passwordless-authentication.onrender.com',
+        rpID: process.env.RPID,
         rpName: 'My Localhost Machine',
         attestationType: 'none',
         userName: user.username,
@@ -67,8 +67,8 @@ app.post('/register-verify', async (req, res) => {
 
     const verificationResult = await verifyRegistrationResponse({
         expectedChallenge: challenge,
-        expectedOrigin: 'https://passwordless-authentication.onrender.com',
-        expectedRPID: 'passwordless-authentication.onrender.com',
+        expectedOrigin: process.env.RPORIGIN,
+        expectedRPID: process.env.RPID,
         response: cred,
     });
 
@@ -90,7 +90,7 @@ app.post('/login-challenge', async (req, res) => {
     }
 
     const opts = await generateAuthenticationOptions({
-        rpID: 'passwordless-authentication.onrender.com',
+        rpID: process.env.RPID,
         userVerification: 'preferred',
     });
 
@@ -126,8 +126,8 @@ app.post('/login-verify', async (req, res) => {
 
     const result = await verifyAuthenticationResponse({
         expectedChallenge: challenge,
-        expectedOrigin: 'https://passwordless-authentication.onrender.com',
-        expectedRPID: 'passwordless-authentication.onrender.com',
+        expectedOrigin: process.env.RPORIGIN,
+        expectedRPID: process.env.RPID,
         response: cred,
         authenticator: user.credentials[0] // Assuming one credential for simplicity
     });
